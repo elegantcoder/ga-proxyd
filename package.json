@@ -9,6 +9,7 @@
   },
   "author": "Constantine Kim",
   "license": "MIT",
+  "bin": {"ga_proxyd": "./ga_proxyd"},
   "dependencies": {
     "debug": "~1.0.3",
     "proxy-middleware": "~0.5.0",
