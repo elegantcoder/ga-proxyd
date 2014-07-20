@@ -1,5 +1,5 @@
 {
-  "name": "ga-proxyd",
+  "name": "gaproxyd",
   "version": "0.1.1",
   "description": "Reverse Proxy Daemon for Google Analytics",
   "main": "index.js",
@@ -10,7 +10,7 @@
   "author": "Constantine Kim",
   "license": "MIT",
   "bin": {
-    "ga_proxyd": "./ga_proxyd"
+    "gaproxyd": "./gaproxyd"
   },
   "dependencies": {
     "debug": "~1.0.3",

@@ -2,8 +2,8 @@
 //  <a href="http://www.maxmind.com">http://www.maxmind.com</a>.
 
 var fs = require('fs');
-var debug = require('debug')('ga-proxy:plugin:country_filter');
-var error = require('debug')('ga-proxy:plugin:country_filter');
+var debug = require('debug')('gaproxyd:plugin:country_filter');
+var error = require('debug')('gaproxyd:plugin:country_filter');
 error.log = console.error.bind(console);
 
 var getCountryCodeByIp = function (ipAddress) {
@@ -14,12 +14,12 @@ var getCountryCodeByIp = function (ipAddress) {
 }
 
 module.exports = function (app, options) {
-  app.use('/ga.js', function (req, res, next) {
-    var fileName = 'public/ga-original.js'
+  app.use('/analytics.js', function (req, res, next) {
+    var fileName = 'public/analytics-original.js'
       , ipAddress = req.connection.remoteAddress;
 
     if (!!~options.blackList.indexOf(getCountryCodeByIp(ipAddress))) {
-      fileName = 'public/ga-modified.js';
+      fileName = 'public/analytics-modified.js';
     }
 
     fs.readFile(fileName, {encoding: 'utf-8'}, function (err, data) {

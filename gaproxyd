@@ -4,21 +4,21 @@ myreadlink() { [ ! -h "$1" ] && echo "$1" || (local link="$(expr "$(command ls -
 whereis_realpath() { local SCRIPT_PATH=$1; myreadlink ${SCRIPT_PATH} | sed "s|^\([^/].*\)\$|$(dirname ${SCRIPT_PATH})/\1|"; }
 cd $(dirname $(whereis_realpath ${0}))
 
-ga_proxydurl=`node -e 'var c=require("./lib/config");console.log("http://127.0.0.1:"+c.server.port+c.server.base)'`
+gaproxydurl=`node -e 'var c=require("./lib/config");console.log("http://127.0.0.1:"+c.server.port+c.server.base)'`
 
 case "$1" in
 start)
-  if curl -o /dev/null --silent --fail "$ga_proxydurl"; then
+  if curl -o /dev/null --silent --fail "$gaproxydurl"; then
     echo -n "Stopping ga proxy daemon..."
-    forever stop lib/ga-proxyd.js >/dev/null 2>/dev/null
+    forever stop lib/gaproxyd.js >/dev/null 2>/dev/null
     echo " OK"
   fi
   echo -n "Starting ga proxy daemon."
-  forever --minUptime 1000 --spinSleepTime 1000 -a -l forever.log -o out.log -e err.log start lib/ga-proxyd.js >/dev/null 2>/dev/null
+  forever --minUptime 1000 --spinSleepTime 1000 -a -l forever.log -o out.log -e err.log start lib/gaproxyd.js >/dev/null 2>/dev/null
   for i in {1..10}
   do
     sleep 1
-  if curl -o /dev/null --silent --fail "$ga_proxydurl"; then
+  if curl -o /dev/null --silent --fail "$gaproxydurl"; then
     echo " OK"
     exit 0
   else
@@ -28,16 +28,16 @@ start)
   echo " Failed"
 ;;
 status)
-  if curl -o /dev/null --silent --fail "$ga_proxydurl"; then
+  if curl -o /dev/null --silent --fail "$gaproxydurl"; then
     echo "ga proxy daemon is running"
   else
     echo "ga proxy daemon is stopped"
   fi
 ;;
 stop)
-  if curl -o /dev/null --silent --fail "$ga_proxydurl"; then
+  if curl -o /dev/null --silent --fail "$gaproxydurl"; then
     echo -n "Stopping ga proxy daemon..."
-    forever stop lib/ga-proxyd.js >/dev/null 2>/dev/null
+    forever stop lib/gaproxyd.js >/dev/null 2>/dev/null
     echo " OK"
   else
     echo "ga proxy daemon is already stopped"
@@ -48,7 +48,7 @@ restart)
   $0 start
 ;;
 startsync)
-  forever --minUptime 1000 --spinSleepTime 1000 -a -l forever.log -o out.log -e err.log lib/ga-proxyd.js
+  forever --minUptime 1000 --spinSleepTime 1000 -a -l forever.log -o out.log -e err.log lib/gaproxyd.js
 ;;
 config)
   if [ ! -f ./config.local.js ]; then
@@ -57,11 +57,11 @@ config)
   if [ "$EDITOR" != "" ]; then
     $EDITOR config.local.js
   else
-    echo "You can use 'EDITOR=xxx ga_proxyd config' to set the editor to use. Defaulting to vi..."
+    echo "You can use 'EDITOR=xxx gaproxyd config' to set the editor to use. Defaulting to vi..."
     vi config.local.js
   fi
 ;;
 *)
-  echo "Usage: ga_proxyd {status|config|start|stop|restart}"
+  echo "Usage: gaproxyd {status|config|start|stop|restart}"
   exit 1
 esac
