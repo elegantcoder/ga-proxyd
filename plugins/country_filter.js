@@ -10,16 +10,18 @@ var getCountryCodeByIp = function (ipAddress) {
   var maxmind = require('maxmind');
   maxmind.init('geoIP/GeoIP.dat');
   var country = maxmind.getCountry(ipAddress) || {code: 'N/A'};
+  debug('Remote Address: %s, Country Code: %s ', ipAddress, country.code);
   return country.code;
-}
+};
 
 module.exports = function (app, options) {
-  app.use('/analytics.js', function (req, res, next) {
-    var fileName = 'public/analytics-original.js'
+  app.use('/ga.js', function (req, res, next) {
+    var fileName = 'public/ga-original.js'
       , ipAddress = req.connection.remoteAddress;
 
     if (!!~options.blackList.indexOf(getCountryCodeByIp(ipAddress))) {
-      fileName = 'public/analytics-modified.js';
+      debug('Load ga-modified');
+      fileName = 'public/ga-modified.js';
     }
 
     fs.readFile(fileName, {encoding: 'utf-8'}, function (err, data) {
@@ -31,4 +33,4 @@ module.exports = function (app, options) {
       res.end();
     });
   });
-}
+};
